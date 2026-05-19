@@ -27,21 +27,35 @@ All notebooks also exist as Python scripts (converted through [jupytext](https:/
 ## Getting started
 
 #### Environment
-The easiest way to get started is to use a docker image we provide
-```
-docker run -it -p 8888:8888 --platform=linux/amd64 registry.hf.space/b1ro-chemcpa:latest
-```
-this image contains the source code and all dependencies to run the experiments.
-By default it runs a jupyter server on port 8888.
+> Fork patch (`williamrobotma`): the setup steps below describe the validated workflow for this fork and are not part of the original upstream quick-start text.
 
-Alternatively you may clone this repository and setup your own environment by running:
+The committed `environment.yml` is the source of truth for both the local setup path and the included Dockerfile.
 
-```python
+To reproduce the validated local environment:
+
+```bash
 conda env create -f environment.yml
-python setup.py install -e .
+conda activate chemCPA
+python -m pip install -e .
+./smoke_check.sh
 ```
 
+If you already use `mamba`, it can be used as a drop-in replacement for the environment creation step.
 
+If you prefer a containerized setup, build the image from this checkout:
+
+```bash
+docker build -t chemcpa .
+docker run -it --rm -p 8888:8888 --platform=linux/amd64 chemcpa
+```
+
+The smoke check verifies the core imports and the training entrypoint.
+
+#### Fork Patch Notes (`williamrobotma`)
+- Fork patch (`williamrobotma`): `python -m chemCPA.train_hydra` is the supported entrypoint in this fork because `chemCPA/train_hydra.py` now uses a package-relative import.
+- Fork patch (`williamrobotma`): `ComPert.compute_drug_embeddings_` masks zero-dose channels in the one-hot `mlp` doser path so this fork matches the index-based behavior.
+- Fork patch (`williamrobotma`): `config/main.yaml` defaults to `sciplex` because that dataset config exists in this checkout, while the upstream default points to a missing entry here.
+- Fork patch (`williamrobotma`): `smoke_check.sh` is a fork-only validation helper for the local environment and module entrypoint.
 
 #### Datasets
 The datasets are not included in the docker image, but get automatically downloaded when you run the notebooks that require them. The datasets may alternatively be downloaded manually using the python tool in the `raw_data/dataset.py` folder. Usage is:
@@ -71,9 +85,11 @@ A description of the preprocessing steps is given in the `preprocessing/README.m
 of individual notebooks. Section 4 of the paper is also highly relevant.
 
 #### Training the models
+> Fork patch (`williamrobotma`): this fork uses the module invocation below because `chemCPA/train_hydra.py` now imports `ChemCPA` via the package path.
+
 Run 
 ```
-python chemCPA/train_hydra.py
+python -m chemCPA.train_hydra
 ```
 
 ## Citation

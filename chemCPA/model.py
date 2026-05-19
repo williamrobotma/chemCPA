@@ -461,6 +461,8 @@ class ComPert(torch.nn.Module):
                     scaled_d = self.dosers[d](dose_d).sigmoid()
                     scaled_list.append(scaled_d)
                 scaled_dosages = torch.cat(scaled_list, dim=1)
+                # Fork patch (williamrobotma): keep absent drugs inactive in one-hot mode so this fork matches the index-based doser behavior.
+                scaled_dosages = scaled_dosages * drugs.ne(0).to(scaled_dosages.dtype)
             elif self.doser_type == "amortized":
                 scaled_dosages = self.dosers(drugs).sigmoid()
             elif self.doser_type in ("sigm", "logsigm"):
