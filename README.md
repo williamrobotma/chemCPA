@@ -70,6 +70,12 @@ of individual notebooks. Section 4 of the paper is also highly relevant.
 
 ##### Local checkout notes
 
+For a fresh local machine, you can apply the local-only setup steps with:
+
+```bash
+./bootstrap_local.sh [/path/to/chemcpa-data]
+```
+
 This branch keeps only a small set of local environment fixes in `environment.yml`: compatibility pins for the working Torch/DeepChem/Seml stack, plus `gdown`, `descriptastorus`, and `sfaira`, which upstream Docker installed after environment creation.
 
 The repository expects all generated datasets, embeddings, and checkpoints under `project_folder/`. In this checkout that path may be a lab-specific symlink that is not valid locally. If so, replace it locally with a writable directory or symlink before preprocessing. For example:
