@@ -107,8 +107,7 @@ RUN --mount=target=environment.yml,source=environment.yml \
     chown -R user:user /home/user/conda/envs/chemCPA && \
     chown -R user:user /home/user/.conda
 
-# Fork patch (williamrobotma): keep Docker installs aligned with this fork's pinned `environment.yml` instead of layering unpinned pip installs.
-# Activate the Conda environment and run additional pip commands
+# Use the pinned environment file as the source of truth for extra Python deps.
 RUN . /home/user/conda/etc/profile.d/conda.sh && \
     conda activate chemCPA && \
     pip install -e .

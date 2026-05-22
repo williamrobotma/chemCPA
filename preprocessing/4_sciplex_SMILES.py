@@ -51,22 +51,22 @@
 # ## Imports
 
 # +
-import matplotlib.pyplot as plt
+import os
+import sys
+import warnings
+
 import numpy as np
-import pandas as pd
 import rdkit
 import scanpy as sc
 from rdkit import Chem
 
-import warnings
-from chemCPA.paths import DATA_DIR, PROJECT_DIR
+from chemCPA.paths import DATA_DIR
 
-import os
-import sys
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-import raw_data.datasets as datasets
 import logging
+
+import raw_data.datasets as datasets
 
 logging.basicConfig(level=logging.INFO)
 from notebook_utils import suppress_output
@@ -85,7 +85,7 @@ with suppress_output():
 
 # +
 # Switch between 977 (True) and 2000 (False) gene set 
-LINCS_GENES = False 
+LINCS_GENES = True 
 
 adata_cpa = sc.read(DATA_DIR/f"sciplex3_{'matched_genes_lincs' if not LINCS_GENES else 'lincs_genes'}.h5ad") 
 adata_cpi = sc.read(datasets.trapnell_final_v7())
@@ -119,9 +119,6 @@ adata_out_subset = DATA_DIR / f"trapnell_cpa_subset{'_lincs_genes' if LINCS_GENE
 adata_cpi.obs.product_name[adata_cpi.obs.SMILES == 'O[C@H]([C@@H](O)C(O)=O)C(O)=O.CN1CCN(CC1)C1=NC(\\C=C\\C2=CC=CC=C2)=NC(NC2=NNC(C)=C2)=C1 |r,c:24,26,28,36,38,t:17,22,32|']
 
 # +
-from rdkit import Chem
-from rdkit.Chem.Draw import IPythonConsole
-from rdkit.Chem import Draw
 
 
 def mol_with_atom_index(mol):

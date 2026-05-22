@@ -1,7 +1,7 @@
 defaults: 
   - _self_
   - model: finetune 
-  - dataset:  sciplex  # Fork patch (williamrobotma): `sciplex` exists in this checkout; the upstream default points to a missing dataset config here.
+  - dataset:  sciplex_lincs_genes
   - training: default 
   - wandb: default
   - hydra: default

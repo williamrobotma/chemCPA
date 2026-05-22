@@ -9,8 +9,7 @@ from lightning.pytorch.loggers import WandbLogger
 from omegaconf import OmegaConf
 
 from chemCPA.data.data import PerturbationDataModule, load_dataset_splits
-# Fork patch (williamrobotma): use a package import so `python -m chemCPA.train_hydra` resolves reliably in this fork.
-from chemCPA.lightning_module import ChemCPA
+from lightning_module import ChemCPA  # your LightningModule containing ComPert usage
 from chemCPA.paths import WB_DIR
 
 

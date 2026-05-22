@@ -27,35 +27,19 @@ All notebooks also exist as Python scripts (converted through [jupytext](https:/
 ## Getting started
 
 #### Environment
-> Fork patch (`williamrobotma`): the setup steps below describe the validated workflow for this fork and are not part of the original upstream quick-start text.
+The easiest way to get started is to use a docker image we provide
+```
+docker run -it -p 8888:8888 --platform=linux/amd64 registry.hf.space/b1ro-chemcpa:latest
+```
+this image contains the source code and all dependencies to run the experiments.
+By default it runs a jupyter server on port 8888.
 
-The committed `environment.yml` is the source of truth for both the local setup path and the included Dockerfile.
+Alternatively you may clone this repository and setup your own environment by running:
 
-To reproduce the validated local environment:
-
-```bash
+```python
 conda env create -f environment.yml
-conda activate chemCPA
-python -m pip install -e .
-./smoke_check.sh
+python setup.py install -e .
 ```
-
-If you already use `mamba`, it can be used as a drop-in replacement for the environment creation step.
-
-If you prefer a containerized setup, build the image from this checkout:
-
-```bash
-docker build -t chemcpa .
-docker run -it --rm -p 8888:8888 --platform=linux/amd64 chemcpa
-```
-
-The smoke check verifies the core imports and the training entrypoint.
-
-#### Fork Patch Notes (`williamrobotma`)
-- Fork patch (`williamrobotma`): `python -m chemCPA.train_hydra` is the supported entrypoint in this fork because `chemCPA/train_hydra.py` now uses a package-relative import.
-- Fork patch (`williamrobotma`): `ComPert.compute_drug_embeddings_` masks zero-dose channels in the one-hot `mlp` doser path so this fork matches the index-based behavior.
-- Fork patch (`williamrobotma`): `config/main.yaml` defaults to `sciplex` because that dataset config exists in this checkout, while the upstream default points to a missing entry here.
-- Fork patch (`williamrobotma`): `smoke_check.sh` is a fork-only validation helper for the local environment and module entrypoint.
 
 #### Datasets
 The datasets are not included in the docker image, but get automatically downloaded when you run the notebooks that require them. The datasets may alternatively be downloaded manually using the python tool in the `raw_data/dataset.py` folder. Usage is:
@@ -84,12 +68,46 @@ python preprocessing/run_notebooks.py
 A description of the preprocessing steps is given in the `preprocessing/README.md` file and in the headers
 of individual notebooks. Section 4 of the paper is also highly relevant.
 
-#### Training the models
-> Fork patch (`williamrobotma`): this fork uses the module invocation below because `chemCPA/train_hydra.py` now imports `ChemCPA` via the package path.
+##### Local checkout notes
 
+This branch keeps only a small set of local environment fixes in `environment.yml`: compatibility pins for the working Torch/DeepChem/Seml stack, plus `gdown`, `descriptastorus`, and `sfaira`, which upstream Docker installed after environment creation.
+
+The repository expects all generated datasets, embeddings, and checkpoints under `project_folder/`. In this checkout that path may be a lab-specific symlink that is not valid locally. If so, replace it locally with a writable directory or symlink before preprocessing. For example:
+
+```bash
+rm project_folder
+mkdir -p /path/to/chemcpa-data
+ln -s /path/to/chemcpa-data project_folder
+```
+
+Keep that as a local setup step; do not commit the replacement.
+
+If any required dataset is still missing, run the preprocessing scripts manually from an interactive terminal instead of relying on `python preprocessing/run_notebooks.py`, because the upstream runner launches child scripts through pipes and download prompts may fail with `EOFError`.
+
+For the GPU preprocessing step in `preprocessing/5_sciplex_ood_splits.py`, install the RAPIDS dependency separately before running that script:
+
+```bash
+python -m pip install --extra-index-url https://pypi.nvidia.com 'rapids-singlecell[rapids11]==0.10.10'
+```
+
+`preprocessing/4_sciplex_SMILES.py` needs to be run twice, once with `LINCS_GENES = True` and once with `LINCS_GENES = False`.
+
+`preprocessing/6_baseline_sciplex_dataset.py` expects `project_folder/datasets/sciplex_complete_middle_subset_lincs_genes.h5ad`, while step 5 writes `sciplex_complete_middle_subset_lincs_genes_v2.h5ad`. If needed, create a local compatibility symlink before running step 6:
+
+```bash
+ln -s sciplex_complete_middle_subset_lincs_genes_v2.h5ad project_folder/datasets/sciplex_complete_middle_subset_lincs_genes.h5ad
+```
+
+In this checkout, training should be launched with an explicit dataset override because `config/main.yaml` points to a missing dataset config:
+
+```bash
+python chemCPA/train_hydra.py dataset=sciplex
+```
+
+#### Training the models
 Run 
 ```
-python -m chemCPA.train_hydra
+python chemCPA/train_hydra.py
 ```
 
 ## Citation

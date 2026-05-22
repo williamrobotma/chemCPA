@@ -156,3 +156,6 @@ scripts/*.yaml
 embeddings_dir
 training_output
 training_output.zip
+
+# Fork patch (williamrobotma):
+/.ruff_cache/

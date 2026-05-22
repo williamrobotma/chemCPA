@@ -3,7 +3,7 @@ channels:
   - pytorch
   - defaults
   - conda-forge
-# Fork patch (williamrobotma): these pins describe the validated fork environment used for both local setup and the Docker build.
+# Local compatibility pins for the working Torch/DeepChem/Seml stack on this branch.
 dependencies:
   - python=3.9
   - adjusttext
@@ -47,20 +47,9 @@ dependencies:
   - scikit-image
   - pip
   - pip:
-      # Fork patch (williamrobotma): pin pip-only packages so the fork rebuild stays aligned with the validated stack.
+      # Pip-only packages needed by the current local environment.
       - pyarrow==16.0.0
       - tensorflow==2.18.0
       - dgllife==0.3.2
       - scgen==2.1.0
-      - scvi-tools==1.0.4
-      - chex==0.1.7
-      - jax==0.4.18
-      - jaxlib==0.4.18
-      - flax==0.7.4
-      - numpyro==0.15.0
-      - optax==0.2.1
-      - orbax-checkpoint==0.5.16
-      - sparse==0.15.5
-      - dm-tree==0.1.8
-      - pyro-ppl==1.8.4
       - sfaira==0.3.12
