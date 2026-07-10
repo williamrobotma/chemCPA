@@ -70,11 +70,54 @@ python preprocessing/run_notebooks.py
 A description of the preprocessing steps is given in the `preprocessing/README.md` file and in the headers
 of individual notebooks. Section 4 of the paper is also highly relevant.
 
+##### Local checkout notes
+
+See [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) for the full story on why the
+prebuilt `registry.hf.space` image cannot be pulled (the Space build is
+OOM-killed on Hugging Face's build sandbox) and why you should **build the image
+locally** instead:
+
+```bash
+docker build -t chemcpa .
+docker run -it --gpus all -p 8888:8888 chemcpa
+```
+
+For a bare-metal (non-Docker) checkout on a fresh machine, apply the local setup
+steps with:
+
+```bash
+./bootstrap_local.sh [/path/to/chemcpa-data]
+```
+
+A few practical notes for a fresh local checkout:
+
+- The repository expects generated datasets, embeddings, and checkpoints under
+  `project_folder/`. In a fresh clone this path is a lab-specific symlink that is
+  not valid locally. Replace it with a writable directory/symlink before
+  preprocessing (this is what `bootstrap_local.sh` does); keep it a local step
+  and do not commit the replacement.
+- If a required dataset is missing, run the preprocessing scripts manually from
+  an interactive terminal rather than `python preprocessing/run_notebooks.py` —
+  the runner launches child scripts through pipes and download prompts can fail
+  with `EOFError`.
+- The GPU step in `preprocessing/5_sciplex_ood_splits.py` needs RAPIDS, installed
+  separately:
+  `python -m pip install --extra-index-url https://pypi.nvidia.com 'rapids-singlecell[rapids11]==0.10.10'`
+- `preprocessing/4_sciplex_SMILES.py` must be run twice — once with
+  `LINCS_GENES = True` and once with `LINCS_GENES = False` (edit the flag near the
+  top of the script).
+- `preprocessing/6_baseline_sciplex_dataset.py` expects
+  `project_folder/datasets/sciplex_complete_middle_subset_lincs_genes.h5ad`, while
+  step 5 writes `..._v2.h5ad`. If needed, create a local compatibility symlink
+  before running step 6.
+
 #### Training the models
-Run 
+Run
 ```
 python chemCPA/train_hydra.py
 ```
+The default dataset config in `config/main.yaml` is `sciplex`. Select another
+variant from `config/dataset/` with an override, e.g. `dataset=lincs`.
 
 ## Citation
 

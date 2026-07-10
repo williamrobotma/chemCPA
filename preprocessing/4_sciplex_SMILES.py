@@ -51,15 +51,13 @@
 # ## Imports
 
 # +
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import rdkit
 import scanpy as sc
 from rdkit import Chem
 
 import warnings
-from chemCPA.paths import DATA_DIR, PROJECT_DIR
+from chemCPA.paths import DATA_DIR
 
 import os
 import sys
@@ -120,8 +118,6 @@ adata_cpi.obs.product_name[adata_cpi.obs.SMILES == 'O[C@H]([C@@H](O)C(O)=O)C(O)=
 
 # +
 from rdkit import Chem
-from rdkit.Chem.Draw import IPythonConsole
-from rdkit.Chem import Draw
 
 
 def mol_with_atom_index(mol):

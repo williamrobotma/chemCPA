@@ -166,7 +166,7 @@ Diff vs `main` touches 7 files. Triage for this new attempt:
 |---|---|---|
 | `bootstrap_local.sh` (new) | local setup: project_folder symlink, conda env, `pip install -e .`, RAPIDS, `skip-worktree` | **Bring in** — directly useful on the big machine |
 | `README.md` "Local checkout notes" | documents project_folder, headless preprocessing (`EOFError`), RAPIDS step 5, step5→6 filename symlink, `dataset=sciplex` override | **Bring in** (lightly edited) — valuable, but note it documents *workarounds* (§4) |
-| `preprocessing/4_sciplex_SMILES.py` | removes notebook-only imports (`IPythonConsole`, `Draw`) so it runs headless; hardcodes `LINCS_GENES = True` | **Split**: bring the headless import cleanup; the `LINCS_GENES` hardcode is a workaround (must be run both ways — make it a CLI/env toggle instead) |
+| `preprocessing/4_sciplex_SMILES.py` | removes notebook-only imports (`IPythonConsole`, `Draw`) so it runs headless; hardcodes `LINCS_GENES = True` | **Split**: bring the headless import cleanup only. Leave `LINCS_GENES` as a plain editable flag (run the script twice) — a CLI/env toggle would be over-engineering |
 | `.gitignore` | adds `/.ruff_cache/` | **Bring in** — trivial |
 | `Dockerfile` | folds post-create pip installs (sfaira, descriptastorus, gdown, jupytext) into `environment.yml`; keeps `pip install -e .` | **Conditional** — sensible cleanup, but coupled to the env-file decision (§2) |
 | `environment.yml` | hand-pinned torch 1.12.1 + tf 2.18 + lightning 2.0.9 + numpy 1.26.4 (a *third* stack) | **Quarantine / reconcile** — decide against `environment.yaml` lockfile first (§2). Latent risk: pip `tensorflow==2.18.0` expects CUDA 12/cuDNN 9 but the env is CUDA 11.3 → GPU TF won't work (fine only if TF is CPU-only / transitive) |
@@ -185,5 +185,35 @@ Diff vs `main` touches 7 files. Triage for this new attempt:
    local README notes, the headless preprocessing import fixes.
 5. **Leave the stale bits out** (§6): the formatting-only churn in
    `train_hydra.py`, and the hardcoded `LINCS_GENES` toggle.
+
+## 8. Decisions applied on this branch
+
+Decided collaboratively; recorded here so the big-machine attempt knows exactly
+what changed and what was intentionally left behind.
+
+- **Environment base → deferred.** Keep the loose upstream `environment.yml` and
+  rely on `docker build` (Docker already encodes that file; the big machine has
+  no OOM). No env-file changes on this branch. The `environment.yaml` lockfile vs.
+  paper-era-1.12 decision is left to be made on the big machine (§2).
+- **Quarantine → left on the `env` branch.** The stale artifacts — the
+  formatting-only churn in `chemCPA/train_hydra.py`, the hand-pinned
+  `environment.yml`, and the `LINCS_GENES = True` hardcode — are **not** merged
+  here. They remain recoverable on `origin/env`; this report is the pointer to
+  them.
+
+**Merged into this branch:**
+
+| Change | Source | Why |
+|---|---|---|
+| `packages.txt`, `on_startup.sh` (verbatim from the Space) | fresh | unblocks local `docker build` (§3) |
+| `config/main.yaml`: default `dataset` → `sciplex` | fresh | training runs without a `dataset=` override (§4) |
+| `preprocessing/4_sciplex_SMILES.py`: drop notebook-only/unused imports | `env` (import cleanup only) | script runs headless; `LINCS_GENES` left as an editable flag |
+| `bootstrap_local.sh` | `env` (verbatim) | fresh-machine setup helper (non-Docker path) |
+| README "Local checkout notes" | `env` (adapted) | captured setup knowledge; updated to reflect the fixes above |
+| `.gitignore`: ignore `/.ruff_cache/` | `env` | housekeeping |
+
+**Deliberately not done (avoid over-engineering):** turning `LINCS_GENES` into a
+CLI/env flag; carrying the `train_hydra.py` reformatting; changing the
+environment pins.
 </content>
 </invoke>
