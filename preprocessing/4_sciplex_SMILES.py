@@ -14,9 +14,9 @@
 
 # # 4 SCIPLEX SMILES
 #
-# This is an updated version of `sciplex_SMILES.ipynb` which relies on a `drug_dict` to assign SMILES strings.  
-# The `sciplex_SMILES.ipynb` notebook is not applicable to the full sciplex data as it relies on the `.obs_names`.  
-# Hence, the second half of the dataset (left out in the original CPA publication) would be left without SMILES entries. 
+# This is an updated version of `sciplex_SMILES.ipynb` which relies on a `drug_dict` to assign SMILES strings.
+# The `sciplex_SMILES.ipynb` notebook is not applicable to the full sciplex data as it relies on the `.obs_names`.
+# Hence, the second half of the dataset (left out in the original CPA publication) would be left without SMILES entries.
 #
 # **Requires**
 # * `'sciplex3_matched_genes_lincs.h5ad'`
@@ -74,7 +74,7 @@ from notebook_utils import suppress_output
 with suppress_output():
     sc.set_figure_params(dpi=80, frameon=False)
     sc.logging.print_header()
-    warnings.filterwarnings('ignore')
+    warnings.filterwarnings("ignore")
 # -
 
 # %load_ext autoreload
@@ -84,10 +84,13 @@ with suppress_output():
 # Note: Run notebook for both adata objects (LINCS_GENES)
 
 # +
-# Switch between 977 (True) and 2000 (False) gene set 
-LINCS_GENES = True 
+# Switch between 977 (True) and 2000 (False) gene set
+LINCS_GENES = False
 
-adata_cpa = sc.read(DATA_DIR/f"sciplex3_{'matched_genes_lincs' if not LINCS_GENES else 'lincs_genes'}.h5ad") 
+adata_cpa = sc.read(
+    DATA_DIR
+    / f"sciplex3_{'matched_genes_lincs' if not LINCS_GENES else 'lincs_genes'}.h5ad"
+)
 adata_cpi = sc.read(datasets.trapnell_final_v7())
 # -
 
@@ -96,7 +99,9 @@ adata_cpa
 # Determine output directory
 
 adata_out = DATA_DIR / f"trapnell_cpa{'_lincs_genes' if LINCS_GENES else ''}.h5ad"
-adata_out_subset = DATA_DIR / f"trapnell_cpa_subset{'_lincs_genes' if LINCS_GENES else ''}.h5ad"
+adata_out_subset = (
+    DATA_DIR / f"trapnell_cpa_subset{'_lincs_genes' if LINCS_GENES else ''}.h5ad"
+)
 
 # Overview over adata files
 
@@ -110,13 +115,16 @@ adata_out_subset = DATA_DIR / f"trapnell_cpa_subset{'_lincs_genes' if LINCS_GENE
 # __________
 # ### Drug is combined with acid
 
-# In the `adata_cpi` we distinguish between `'ENMD-2076'` and `'ENMD-2076 L-(+)-Tartaric acid'`.  
-# They have different also different SMILES strings in `.obs.SMILES`. 
-# Since we do not keep this different in the `.obs.condition` columns,  
-# which is a copy of `.obs.product_name` for `adata_cpa`, see `'lincs_sciplex_gene_matching.ipynb'`,  
+# In the `adata_cpi` we distinguish between `'ENMD-2076'` and `'ENMD-2076 L-(+)-Tartaric acid'`.
+# They have different also different SMILES strings in `.obs.SMILES`.
+# Since we do not keep this different in the `.obs.condition` columns,
+# which is a copy of `.obs.product_name` for `adata_cpa`, see `'lincs_sciplex_gene_matching.ipynb'`,
 # I am ignoring this. As result we only have 188 drugs in the sciplex dataset.
 
-adata_cpi.obs.product_name[adata_cpi.obs.SMILES == 'O[C@H]([C@@H](O)C(O)=O)C(O)=O.CN1CCN(CC1)C1=NC(\\C=C\\C2=CC=CC=C2)=NC(NC2=NNC(C)=C2)=C1 |r,c:24,26,28,36,38,t:17,22,32|']
+adata_cpi.obs.product_name[
+    adata_cpi.obs.SMILES
+    == "O[C@H]([C@@H](O)C(O)=O)C(O)=O.CN1CCN(CC1)C1=NC(\\C=C\\C2=CC=CC=C2)=NC(NC2=NNC(C)=C2)=C1 |r,c:24,26,28,36,38,t:17,22,32|"
+]
 
 # +
 
@@ -126,6 +134,7 @@ def mol_with_atom_index(mol):
         atom.SetAtomMapNum(atom.GetIdx())
     return mol
 
+
 # Test in a kinase inhibitor
 mol = Chem.MolFromSmiles("CN1CCN(CC1)C1=CC(NC2=NNC(C)=C2)=NC(\\C=C\\C2=CC=CC=C2)=N1")
 # Default
@@ -133,7 +142,9 @@ mol
 # -
 
 # Test in a kinase inhibitor
-mol = Chem.MolFromSmiles("O[C@H]([C@@H](O)C(O)=O)C(O)=O.CN1CCN(CC1)C1=NC(\\C=C\\C2=CC=CC=C2)=NC(NC2=NNC(C)=C2)=C1")
+mol = Chem.MolFromSmiles(
+    "O[C@H]([C@@H](O)C(O)=O)C(O)=O.CN1CCN(CC1)C1=NC(\\C=C\\C2=CC=CC=C2)=NC(NC2=NNC(C)=C2)=C1"
+)
 # Default
 mol
 
@@ -149,7 +160,7 @@ len(drug_dict)
 
 # Checking that the `'ENMD-2076'` entry does not include the adid:
 
-Chem.MolFromSmiles(drug_dict['ENMD-2076'])
+Chem.MolFromSmiles(drug_dict["ENMD-2076"])
 
 # This is a good wat to check the unique `(drug, smiles)` combinations that exist in the `adata_cpi`
 
@@ -160,11 +171,13 @@ Chem.MolFromSmiles(drug_dict['ENMD-2076'])
 # ## Rename drug `(+)-JQ1`
 # This had a different name in the old Sciplex dataset, where it was called `JQ1`. We rename it for consistency.
 
-adata_cpa.obs["condition"] = adata_cpa.obs["condition"].cat.rename_categories({"(+)-JQ1": "JQ1"})
+adata_cpa.obs["condition"] = adata_cpa.obs["condition"].cat.rename_categories({
+    "(+)-JQ1": "JQ1"
+})
 
 # ## Add SMILES to `adata_cpa`
 
-adata_cpa.obs['SMILES'] = adata_cpa.obs.condition.map(drug_dict)
+adata_cpa.obs["SMILES"] = adata_cpa.obs.condition.map(drug_dict)
 
 adata_cpa[adata_cpa.obs["condition"] == "JQ1"].obs["SMILES"].unique()
 
@@ -172,47 +185,53 @@ adata_cpa[adata_cpa.obs["condition"] == "JQ1"].obs["SMILES"].unique()
 #
 # Print some stats on the `condition` columns
 
-print(f'We have {len(list(adata_cpa.obs.condition.value_counts().index))} drug names in adata_cpa: \n\n\t{list(adata_cpa.obs.condition.value_counts().index)}\n\n')
-print(f'We have {len(list(adata_cpi.obs.condition.value_counts().index))} drug names in adata_cpi: \n\n\t{list(adata_cpi.obs.condition.value_counts().index)}')
+print(
+    f"We have {len(list(adata_cpa.obs.condition.value_counts().index))} drug names in adata_cpa: \n\n\t{list(adata_cpa.obs.condition.value_counts().index)}\n\n"
+)
+print(
+    f"We have {len(list(adata_cpi.obs.condition.value_counts().index))} drug names in adata_cpi: \n\n\t{list(adata_cpi.obs.condition.value_counts().index)}"
+)
 
-# Check that assigned SMILES match the condition,  
+# Check that assigned SMILES match the condition,
 # it should be just one smiles string per condition
 
-(adata_cpa.obs.condition=='nan').sum()
+(adata_cpa.obs.condition == "nan").sum()
 
 # ### Check for nans
 
-(adata_cpa.obs.condition=='nan').sum()
+(adata_cpa.obs.condition == "nan").sum()
 
 # ### Take care of `control` SMILES
 
-counts = adata_cpa[adata_cpa.obs.condition=='control'].obs.SMILES.value_counts()
-list(counts.index[counts>0])
+counts = adata_cpa[adata_cpa.obs.condition == "control"].obs.SMILES.value_counts()
+list(counts.index[counts > 0])
 
 # Add DMSO SMILES:`CS(C)=O`
 
-adata_cpa.obs["SMILES"] = adata_cpa.obs["SMILES"].astype("category").cat.rename_categories({"": "CS(C)=O"})
+adata_cpa.obs["SMILES"] = (
+    adata_cpa.obs["SMILES"].astype("category").cat.rename_categories({"": "CS(C)=O"})
+)
 
-adata_cpa.obs.loc[adata_cpa.obs.condition=='control', 'SMILES'].value_counts()
+adata_cpa.obs.loc[adata_cpa.obs.condition == "control", "SMILES"].value_counts()
 
 # ### Check double assigned condition
 
-for pert, df in adata_cpa.obs.groupby('condition'):
-    n_smiles = (df.SMILES.value_counts()!=0).sum()
+for pert, df in adata_cpa.obs.groupby("condition"):
+    n_smiles = (df.SMILES.value_counts() != 0).sum()
     print(f"{pert}: {n_smiles}") if n_smiles > 1 else None
 
 # Check that condition align with SMILES
 #
 # If everything is correct there should be no output
 
-for pert, df in adata_cpa.obs.groupby('condition'):
-    n_smiles = (df.SMILES.value_counts()!=0).sum()
+for pert, df in adata_cpa.obs.groupby("condition"):
+    n_smiles = (df.SMILES.value_counts() != 0).sum()
     print(f"{pert}: {n_smiles}") if n_smiles > 1 else None
 
 # ## Make SMILES canonical
 
 # +
-print(f'rdkit version: {rdkit.__version__}\n')
+print(f"rdkit version: {rdkit.__version__}\n")
 
 adata_cpa.obs.SMILES = adata_cpa.obs.SMILES.apply(Chem.CanonSmiles)
 # -
@@ -240,7 +259,7 @@ adata_cpa.obs.SMILES = adata_cpa.obs.SMILES.apply(Chem.CanonSmiles)
 # +
 adatas = []
 
-for drug in np.unique(adata_cpa.obs.condition): 
+for drug in np.unique(adata_cpa.obs.condition):
     tmp = adata_cpa[adata_cpa.obs.condition == drug].copy()
     tmp = sc.pp.subsample(tmp, n_obs=50, copy=True, random_state=42)
     adatas.append(tmp)
@@ -262,6 +281,3 @@ adata = sc.read(adata_out_subset)
 adata.obs.dose.value_counts()
 
 adata_cpa.uns["log1p"]
-
-
-

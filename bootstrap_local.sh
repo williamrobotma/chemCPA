@@ -27,7 +27,7 @@ if [[ "$#" -gt 1 ]]; then
     exit 1
 fi
 
-data_root="${1:-$HOME/chemCPA-data}"
+data_root="${1:-../chemCPA-data}"
 if [[ "$data_root" != /* ]]; then
     data_root="$PWD/$data_root"
 fi
