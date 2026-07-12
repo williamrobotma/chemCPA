@@ -156,3 +156,6 @@ scripts/*.yaml
 embeddings_dir
 training_output
 training_output.zip
+
+# FORK(williamrobotma/chemCPA): tooling cache
+/.ruff_cache/

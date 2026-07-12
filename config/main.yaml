@@ -1,8 +1,12 @@
 defaults: 
   - _self_
-  - model: finetune 
-  - dataset:  sciplex_lincs_genes
-  - training: default 
+  - model: finetune
+  # FORK(williamrobotma/chemCPA): upstream default was `sciplex_lincs_genes`, but
+  # no such file exists in config/dataset/ (Hydra errors on startup). Repointed to
+  # the existing `sciplex` config, which is the validated run for this checkout.
+  # Override with `dataset=<name>` for other variants (see config/dataset/).
+  - dataset: sciplex
+  - training: default
   - wandb: default
   - hydra: default
 
