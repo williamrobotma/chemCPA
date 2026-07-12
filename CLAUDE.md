@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+<!-- FORK(williamrobotma/chemCPA): file added by this fork (not in upstream theislab/chemCPA). -->
+
 chemCPA predicts single-cell transcriptional responses to drug perturbations
 (NeurIPS 2022). This checkout is a fork focused on getting the model to run and
 reproduce; read the caveats — several documented paths in the upstream README are
@@ -123,6 +125,15 @@ name** so a model pretrained on one covariate set transfers to another.
 
 ## Conventions
 
+- **Tag every fork change.** This is the `williamrobotma/chemCPA` fork of upstream
+  `theislab/chemCPA`. Any edit to a file that also exists upstream must carry a
+  `FORK(williamrobotma/chemCPA):` marker at the change site — `# FORK(williamrobotma/chemCPA): <reason>`
+  in code/YAML/shell/gitignore, `<!-- FORK(williamrobotma/chemCPA): <reason> -->`
+  in Markdown. Wholly-new fork files carry a single such note at the top instead
+  of per-line tags; files restored verbatim from upstream (e.g. `packages.txt`,
+  `on_startup.sh`) stay untagged. Keep it to one tag per change site — do not
+  spread tags onto unrelated lines. `grep -rn "FORK(williamrobotma/chemCPA)" .`
+  lists every fork change.
 - Notebooks are **jupytext-paired**: every `.ipynb` has a `.py` (percent format)
   counterpart. Edit the `.py`; the pre-commit jupytext hook keeps them in sync.
   Review `.py` versions, not the large `.ipynb` files.

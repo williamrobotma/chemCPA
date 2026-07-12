@@ -1,5 +1,7 @@
 # chemCPA — Docker & Environment Troubleshooting Report
 
+<!-- FORK(williamrobotma/chemCPA): file added by this fork (not in upstream theislab/chemCPA). -->
+
 > Branch: `claude/chemcpa-docker-troubleshoot-rywrjk` (branched from `main` @ `43e830e`)
 > Purpose: hand-off notes for continuing the reproduction attempt on the "big"
 > machine (500 GB RAM, 4× RTX 3090, 64 logical cores). This file records *why*

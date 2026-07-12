@@ -28,6 +28,8 @@ All notebooks also exist as Python scripts (converted through [jupytext](https:/
 
 #### Environment
 
+<!-- FORK(williamrobotma/chemCPA): caveat + local-build path replacing the broken
+     registry pull; upstream command preserved below in <details>. -->
 > **Caveat — the prebuilt image no longer pulls.** The upstream instruction
 > below (`docker run ... registry.hf.space/b1ro-chemcpa:latest`) does **not**
 > work: the Hugging Face Space build is OOM-killed, so no image is published to
@@ -88,6 +90,7 @@ of individual notebooks. Section 4 of the paper is also highly relevant.
 
 ##### Local checkout notes
 
+<!-- FORK(williamrobotma/chemCPA): section added by this fork. -->
 See [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) for the full story on why the
 prebuilt `registry.hf.space` image cannot be pulled (the Space build is
 OOM-killed on Hugging Face's build sandbox) and why you should **build the image
@@ -127,11 +130,27 @@ A few practical notes for a fresh local checkout:
   step 5 writes `..._v2.h5ad`. If needed, create a local compatibility symlink
   before running step 6.
 
+##### Fork conventions
+
+<!-- FORK(williamrobotma/chemCPA): section added by this fork. -->
+This is the `williamrobotma/chemCPA` fork of upstream `theislab/chemCPA`. To keep
+the fork-vs-upstream division clear, **every change to a file that also exists
+upstream is tagged** with `FORK(williamrobotma/chemCPA):` at the change site:
+
+- code / YAML / shell / gitignore → `# FORK(williamrobotma/chemCPA): <reason>`
+- Markdown → `<!-- FORK(williamrobotma/chemCPA): <reason> -->`
+
+Wholly-new files added by the fork carry a single such note at the top instead of
+per-line tags. Files restored verbatim from upstream (e.g. `packages.txt`,
+`on_startup.sh`) are left untagged — they are upstream content, not fork changes.
+List every fork change with `grep -rn "FORK(williamrobotma/chemCPA)" .`.
+
 #### Training the models
 Run
 ```
 python chemCPA/train_hydra.py
 ```
+<!-- FORK(williamrobotma/chemCPA): note on the repointed dataset default. -->
 The default dataset config in `config/main.yaml` is `sciplex`. Select another
 variant from `config/dataset/` with an override, e.g. `dataset=lincs`.
 

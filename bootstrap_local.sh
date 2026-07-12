@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# FORK(williamrobotma/chemCPA): file added by this fork (not in upstream theislab/chemCPA).
 # Local-only bootstrap for a fresh machine.
 set -euo pipefail
 

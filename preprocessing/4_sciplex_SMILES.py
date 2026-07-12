@@ -51,6 +51,8 @@
 # ## Imports
 
 # +
+# FORK(williamrobotma/chemCPA): dropped notebook-only/unused imports (matplotlib,
+# pandas, PROJECT_DIR) so this script runs headless from a terminal.
 import numpy as np
 import rdkit
 import scanpy as sc
@@ -117,6 +119,8 @@ adata_out_subset = DATA_DIR / f"trapnell_cpa_subset{'_lincs_genes' if LINCS_GENE
 adata_cpi.obs.product_name[adata_cpi.obs.SMILES == 'O[C@H]([C@@H](O)C(O)=O)C(O)=O.CN1CCN(CC1)C1=NC(\\C=C\\C2=CC=CC=C2)=NC(NC2=NNC(C)=C2)=C1 |r,c:24,26,28,36,38,t:17,22,32|']
 
 # +
+# FORK(williamrobotma/chemCPA): removed notebook-only rdkit imports here
+# (Chem.Draw.IPythonConsole, Chem.Draw) that break outside a Jupyter kernel.
 from rdkit import Chem
 
 

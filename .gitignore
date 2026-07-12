@@ -157,5 +157,5 @@ embeddings_dir
 training_output
 training_output.zip
 
-# tooling caches
+# FORK(williamrobotma/chemCPA): tooling cache
 /.ruff_cache/
