@@ -109,6 +109,11 @@ tree
 # cd transformers && pip install -e ".[dev]"
 ```
 
+The committed `on_startup.sh` additionally carries a
+`RESTORED-UPSTREAM(williamrobotma/chemCPA):` provenance header (see the fork
+conventions in `CLAUDE.md`/`README.md`); `packages.txt` is left uncommented
+because it is consumed by `xargs ... apt-get install`.
+
 With those two files added, on the big machine:
 
 ```bash

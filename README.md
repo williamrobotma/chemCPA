@@ -141,9 +141,13 @@ upstream is tagged** with `FORK(williamrobotma/chemCPA):` at the change site:
 - Markdown → `<!-- FORK(williamrobotma/chemCPA): <reason> -->`
 
 Wholly-new files added by the fork carry a single such note at the top instead of
-per-line tags. Files restored verbatim from upstream (e.g. `packages.txt`,
-`on_startup.sh`) are left untagged — they are upstream content, not fork changes.
-List every fork change with `grep -rn "FORK(williamrobotma/chemCPA)" .`.
+per-line tags. Files restored verbatim from the upstream Docker build context
+(not authored by the fork) instead carry a `RESTORED-UPSTREAM(williamrobotma/chemCPA):`
+note — e.g. `on_startup.sh`. The one exception is `packages.txt`: it is consumed
+by `xargs ... apt-get install`, so a `#` line would be treated as a package name
+and break the build, so it is left uncommented and recorded as restored-upstream
+here. List changes with `grep -rn "FORK(williamrobotma/chemCPA)" .` and
+`grep -rn "RESTORED-UPSTREAM(williamrobotma/chemCPA)" .`.
 
 #### Training the models
 Run

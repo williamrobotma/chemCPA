@@ -134,6 +134,13 @@ name** so a model pretrained on one covariate set transfers to another.
   `on_startup.sh`) stay untagged. Keep it to one tag per change site — do not
   spread tags onto unrelated lines. `grep -rn "FORK(williamrobotma/chemCPA)" .`
   lists every fork change.
+- **Mark restored-upstream files too.** Files brought back verbatim from the
+  upstream Docker build context (not authored by the fork) carry a
+  `RESTORED-UPSTREAM(williamrobotma/chemCPA):` note instead of a `FORK` tag —
+  e.g. `on_startup.sh`. Exception: `packages.txt` is consumed by
+  `xargs ... apt-get install`, so a `#` line would be parsed as a package name and
+  break the build; it stays uncommented and is recorded as restored-upstream here
+  in prose. `grep -rn "RESTORED-UPSTREAM(williamrobotma/chemCPA)" .` lists the rest.
 - Notebooks are **jupytext-paired**: every `.ipynb` has a `.py` (percent format)
   counterpart. Edit the `.py`; the pre-commit jupytext hook keeps them in sync.
   Review `.py` versions, not the large `.ipynb` files.
