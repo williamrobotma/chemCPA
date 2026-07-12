@@ -27,36 +27,18 @@ All notebooks also exist as Python scripts (converted through [jupytext](https:/
 ## Getting started
 
 #### Environment
-
-<!-- FORK(williamrobotma/chemCPA): caveat + local-build path replacing the broken
-     registry pull; upstream command preserved below in <details>. -->
-> **Caveat — the prebuilt image no longer pulls.** The upstream instruction
-> below (`docker run ... registry.hf.space/b1ro-chemcpa:latest`) does **not**
-> work: the Hugging Face Space build is OOM-killed, so no image is published to
-> that registry. **Build the image locally instead** (see below), or use conda.
-> Full explanation in [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md).
-
-Build and run the image locally (requires an NVIDIA GPU + `nvidia-container-toolkit`):
-```
-docker build -t chemcpa .
-docker run -it --gpus all -p 8888:8888 chemcpa
-```
-This contains the source code and all dependencies to run the experiments, and
-by default runs a Jupyter server on port 8888.
-
-<details>
-<summary>Original (non-working) upstream command, kept for reference</summary>
-
+The easiest way to get started is to use a docker image we provide
 ```
 docker run -it -p 8888:8888 --platform=linux/amd64 registry.hf.space/b1ro-chemcpa:latest
 ```
-</details>
+this image contains the source code and all dependencies to run the experiments.
+By default it runs a jupyter server on port 8888.
 
-Alternatively you may clone this repository and set up a conda environment:
+Alternatively you may clone this repository and setup your own environment by running:
 
-```
+```python
 conda env create -f environment.yml
-pip install -e .
+python setup.py install -e .
 ```
 
 
@@ -88,75 +70,11 @@ python preprocessing/run_notebooks.py
 A description of the preprocessing steps is given in the `preprocessing/README.md` file and in the headers
 of individual notebooks. Section 4 of the paper is also highly relevant.
 
-##### Local checkout notes
-
-<!-- FORK(williamrobotma/chemCPA): section added by this fork. -->
-See [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) for the full story on why the
-prebuilt `registry.hf.space` image cannot be pulled (the Space build is
-OOM-killed on Hugging Face's build sandbox) and why you should **build the image
-locally** instead:
-
-```bash
-docker build -t chemcpa .
-docker run -it --gpus all -p 8888:8888 chemcpa
-```
-
-For a bare-metal (non-Docker) checkout on a fresh machine, apply the local setup
-steps with:
-
-```bash
-./bootstrap_local.sh [/path/to/chemcpa-data]
-```
-
-A few practical notes for a fresh local checkout:
-
-- The repository expects generated datasets, embeddings, and checkpoints under
-  `project_folder/`. In a fresh clone this path is a lab-specific symlink that is
-  not valid locally. Replace it with a writable directory/symlink before
-  preprocessing (this is what `bootstrap_local.sh` does); keep it a local step
-  and do not commit the replacement.
-- If a required dataset is missing, run the preprocessing scripts manually from
-  an interactive terminal rather than `python preprocessing/run_notebooks.py` —
-  the runner launches child scripts through pipes and download prompts can fail
-  with `EOFError`.
-- The GPU step in `preprocessing/5_sciplex_ood_splits.py` needs RAPIDS, installed
-  separately:
-  `python -m pip install --extra-index-url https://pypi.nvidia.com 'rapids-singlecell[rapids11]==0.10.10'`
-- `preprocessing/4_sciplex_SMILES.py` must be run twice — once with
-  `LINCS_GENES = True` and once with `LINCS_GENES = False` (edit the flag near the
-  top of the script).
-- `preprocessing/6_baseline_sciplex_dataset.py` expects
-  `project_folder/datasets/sciplex_complete_middle_subset_lincs_genes.h5ad`, while
-  step 5 writes `..._v2.h5ad`. If needed, create a local compatibility symlink
-  before running step 6.
-
-##### Fork conventions
-
-<!-- FORK(williamrobotma/chemCPA): section added by this fork. -->
-This is the `williamrobotma/chemCPA` fork of upstream `theislab/chemCPA`. To keep
-the fork-vs-upstream division clear, **every change to a file that also exists
-upstream is tagged** with `FORK(williamrobotma/chemCPA):` at the change site:
-
-- code / YAML / shell / gitignore → `# FORK(williamrobotma/chemCPA): <reason>`
-- Markdown → `<!-- FORK(williamrobotma/chemCPA): <reason> -->`
-
-Wholly-new files added by the fork carry a single such note at the top instead of
-per-line tags. Files restored verbatim from the upstream Docker build context
-(not authored by the fork) instead carry a `RESTORED-UPSTREAM(williamrobotma/chemCPA):`
-note — e.g. `on_startup.sh`. The one exception is `packages.txt`: it is consumed
-by `xargs ... apt-get install`, so a `#` line would be treated as a package name
-and break the build, so it is left uncommented and recorded as restored-upstream
-here. List changes with `grep -rn "FORK(williamrobotma/chemCPA)" .` and
-`grep -rn "RESTORED-UPSTREAM(williamrobotma/chemCPA)" .`.
-
 #### Training the models
-Run
+Run 
 ```
 python chemCPA/train_hydra.py
 ```
-<!-- FORK(williamrobotma/chemCPA): note on the repointed dataset default. -->
-The default dataset config in `config/main.yaml` is `sciplex`. Select another
-variant from `config/dataset/` with an override, e.g. `dataset=lincs`.
 
 ## Citation
 
