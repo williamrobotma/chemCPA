@@ -27,18 +27,34 @@ All notebooks also exist as Python scripts (converted through [jupytext](https:/
 ## Getting started
 
 #### Environment
-The easiest way to get started is to use a docker image we provide
+
+> **Caveat — the prebuilt image no longer pulls.** The upstream instruction
+> below (`docker run ... registry.hf.space/b1ro-chemcpa:latest`) does **not**
+> work: the Hugging Face Space build is OOM-killed, so no image is published to
+> that registry. **Build the image locally instead** (see below), or use conda.
+> Full explanation in [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md).
+
+Build and run the image locally (requires an NVIDIA GPU + `nvidia-container-toolkit`):
+```
+docker build -t chemcpa .
+docker run -it --gpus all -p 8888:8888 chemcpa
+```
+This contains the source code and all dependencies to run the experiments, and
+by default runs a Jupyter server on port 8888.
+
+<details>
+<summary>Original (non-working) upstream command, kept for reference</summary>
+
 ```
 docker run -it -p 8888:8888 --platform=linux/amd64 registry.hf.space/b1ro-chemcpa:latest
 ```
-this image contains the source code and all dependencies to run the experiments.
-By default it runs a jupyter server on port 8888.
+</details>
 
-Alternatively you may clone this repository and setup your own environment by running:
+Alternatively you may clone this repository and set up a conda environment:
 
-```python
+```
 conda env create -f environment.yml
-python setup.py install -e .
+pip install -e .
 ```
 
 
