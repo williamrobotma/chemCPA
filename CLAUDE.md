@@ -55,7 +55,7 @@ Caveat: in a fresh clone `project_folder` is a **lab-specific symlink that is no
 valid locally** — replace it with a writable dir/symlink (this is what
 `bootstrap_local.sh` does) and do not commit the replacement. Datasets
 auto-download when notebooks need them, or fetch manually:
-`python raw_data/dataset.py --list` / `--dataset <name>`.
+`python raw_data/datasets.py --list` / `--dataset <name>`.
 
 ## Common commands
 
@@ -147,4 +147,3 @@ name** so a model pretrained on one covariate set transfers to another.
 - Stale/superseded experiments from an earlier attempt live on the `origin/env`
   branch (hand-pinned env, formatting-only churn) and are intentionally kept out
   of this branch — see `TROUBLESHOOTING.md` §6–§8 rather than resurrecting them.
-</content>

@@ -222,5 +222,3 @@ what changed and what was intentionally left behind.
 **Deliberately not done (avoid over-engineering):** turning `LINCS_GENES` into a
 CLI/env flag; carrying the `train_hydra.py` reformatting; changing the
 environment pins.
-</content>
-</invoke>
